@@ -92,8 +92,13 @@ export default function TripsPage() {
 
   async function handleDelete(id) {
     if (!confirm("Delete this trip?")) return;
-    await client.delete(`/trips/${id}`);
-    load();
+    setError("");
+    try {
+      await client.delete(`/trips/${id}`);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.error || "Could not delete trip");
+    }
   }
 
   return (

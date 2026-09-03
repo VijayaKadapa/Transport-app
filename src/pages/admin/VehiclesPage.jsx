@@ -52,8 +52,13 @@ export default function VehiclesPage() {
 
   async function handleDelete(id) {
     if (!confirm("Delete this vehicle?")) return;
-    await client.delete(`/vehicles/${id}`);
-    load();
+    setError("");
+    try {
+      await client.delete(`/vehicles/${id}`);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.error || "Could not delete vehicle");
+    }
   }
 
   return (

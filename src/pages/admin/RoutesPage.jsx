@@ -56,8 +56,13 @@ export default function RoutesPage() {
 
   async function handleDelete(id) {
     if (!confirm("Delete this route?")) return;
-    await client.delete(`/routes/${id}`);
-    load();
+    setError("");
+    try {
+      await client.delete(`/routes/${id}`);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.error || "Could not delete route");
+    }
   }
 
   return (

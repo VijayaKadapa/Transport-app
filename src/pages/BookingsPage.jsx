@@ -7,6 +7,7 @@ export default function BookingsPage() {
   const isStaff = user?.role === "admin" || user?.role === "staff";
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   async function load() {
     setLoading(true);
@@ -24,8 +25,13 @@ export default function BookingsPage() {
 
   async function handleCancel(id) {
     if (!confirm("Cancel this booking?")) return;
-    await client.post(`/bookings/${id}/cancel`);
-    load();
+    setError("");
+    try {
+      await client.post(`/bookings/${id}/cancel`);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.error || "Could not cancel booking");
+    }
   }
 
   if (loading) return <p>Loading bookings...</p>;
@@ -33,6 +39,7 @@ export default function BookingsPage() {
   return (
     <div>
       <h2>{isStaff ? "All Bookings" : "My Bookings"}</h2>
+      {error && <p className="error-message">{error}</p>}
       <table className="data-table">
         <thead>
           <tr>
